@@ -6,4 +6,12 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+# web
 actix-web = "4"
+utoipa = {version = "~3.1", features = ["actix_extras", "chrono", "time", "uuid"]}
+utoipa-swagger-ui = {version = "~3.1", features = ["actix-web"]}
+
+# database
+diesel = { version = "~2.1", features = ["postgres", "chrono", "numeric", "r2d2", "serde_json", "uuid"] }
+diesel_migrations = "~2.1"
+r2d2 = "~0.8.10"
