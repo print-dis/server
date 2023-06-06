@@ -13,11 +13,11 @@ pub struct FilamentType {
     pub bed_temperature: i32,
 }
 
-#[derive(Insertable)]
+#[derive(Insertable, Serialize, Deserialize, ToSchema)]
 #[diesel(table_name = crate::schema::filament_types)]
-pub struct NewFilamentType<'a> {
-    pub name: &'a str,
-    pub manufacturer: &'a str,
-    pub extruder_temperature: &'a i32,
-    pub bed_temperature: &'a i32,
+pub struct NewFilamentType {
+    pub name: String,
+    pub manufacturer: String,
+    pub extruder_temperature: i32,
+    pub bed_temperature: i32,
 }

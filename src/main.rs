@@ -1,7 +1,7 @@
 use std::env;
 
 use actix_web::web::Data;
-use actix_web::{error, get, put, web, App, HttpResponse, HttpServer, Responder};
+use actix_web::{error, get, post, web, App, HttpResponse, HttpServer, Responder};
 use diesel::r2d2::ConnectionManager;
 use diesel::{PgConnection, QueryDsl, RunQueryDsl, SelectableHelper};
 use models::filament_type::NewFilamentType;
@@ -26,10 +26,11 @@ async fn main() -> std::io::Result<()> {
     #[derive(OpenApi)]
     #[openapi(
     paths(
-    get_filamenttype
+    get_filamenttype,
+    post_filamenttype
     ),
     components(
-    schemas(FilamentType)
+    schemas(FilamentType, NewFilamentType)
     ),
     tags(
     (name = "print-dis", description = "Print job management")
@@ -52,6 +53,7 @@ async fn main() -> std::io::Result<()> {
             .app_data(web::Data::new(pool.clone()))
             .service(hello)
             .service(get_filamenttype)
+            .service(post_filamenttype)
             .service(
                 SwaggerUi::new("/swagger-ui/{_:.*}").url("/api-docs/openapi.json", openapi.clone()),
             )
@@ -82,6 +84,29 @@ async fn get_filamenttype(pool: Data<models::db::DbPool>) -> actix_web::Result<i
     Ok(HttpResponse::Ok().json(filament_type))
 }
 
+#[utoipa::path(
+    post,
+    request_body = NewFilamentType,
+    responses(
+        (status = 201, description = "Add new filament type", body = [FilamentType])
+    )
+)]
+#[post("/filamenttype")]
+async fn post_filamenttype(
+    info: web::Json<NewFilamentType>,
+    pool: Data<models::db::DbPool>,
+) -> actix_web::Result<impl Responder> {
+    let req = info.into_inner();
+
+    let created_type = web::block(move || {
+        let mut conn = pool.get().expect("couldn't get db connection from pool");
+        diesel::insert_into(schema::filament_types::table)
+            .values(&req)
+            .returning(FilamentType::as_returning())
+            .get_result(&mut conn)
+            .expect("Error saving new filament type")
+    })
+    .await?;
 
     Ok(HttpResponse::Created().json(created_type))
 }
