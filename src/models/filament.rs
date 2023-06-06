@@ -7,5 +7,4 @@ pub struct Filament {
     pub id: i32,
     pub color: String,
     pub notes: Option<String>,
-
 }

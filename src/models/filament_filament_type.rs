@@ -1,5 +1,5 @@
-use diesel::prelude::*;
 use crate::models::*;
+use diesel::prelude::*;
 
 #[derive(Identifiable, Selectable, Queryable, Associations, Debug)]
 #[diesel(belongs_to(filament::Filament))]
