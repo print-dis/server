@@ -1,7 +1,9 @@
 use diesel::prelude::*;
 use crate::schema::users::id;
+use serde::{Deserialize, Serialize};
+use  utoipa::{ToSchema};
 
-#[derive(Queryable, Selectable)]
+#[derive(Queryable, Selectable, Serialize, Deserialize, ToSchema, Clone, Debug)]
 #[diesel(table_name = crate::schema::filament_types)]
 #[diesel(check_for_backend(diesel::pg::Pg))]
 pub struct FilamentType {
