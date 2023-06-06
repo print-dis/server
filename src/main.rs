@@ -1,3 +1,6 @@
+pub mod models;
+pub mod schema;
+
 use actix_web::{get, App, HttpResponse, HttpServer, Responder};
 
 #[get("/")]
